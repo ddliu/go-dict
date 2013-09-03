@@ -5,6 +5,8 @@ import (
     "encoding/json"
     "strings"
     "regexp"
+    "fmt"
+    // "reflect"
 )
 
 /**
@@ -48,14 +50,50 @@ func (this *DictWord) PropInt(name string) (int, bool) {
     if !ok {
         return 0, false
     }
-    propint, ok := prop.(int)
-    return propint, ok
+
+    return ToInt(prop)
 }
 
 func (this *DictWord) MustPropInt(name string) (int) {
     prop, ok := this.PropInt(name)
     if !ok {
-        panic ("Prop not exist: " + name)
+        panic (fmt.Sprintf("Prop not exist: %s", name))
+    }
+
+    return prop
+}
+
+func (this *DictWord) PropInt32(name string) (int32, bool) {
+    prop, ok := this.props[name]
+    if !ok {
+        return 0, false
+    }
+
+    return ToInt32(prop)
+}
+
+func (this *DictWord) MustPropInt32(name string) (int32) {
+    prop, ok := this.PropInt32(name)
+    if !ok {
+        panic (fmt.Sprintf("Prop not exist: %s", name))
+    }
+
+    return prop
+}
+
+func (this *DictWord) PropInt64(name string) (int64, bool) {
+    prop, ok := this.props[name]
+    if !ok {
+        return 0, false
+    }
+
+    return ToInt64(prop)
+}
+
+func (this *DictWord) MustPropInt64(name string) (int64) {
+    prop, ok := this.PropInt64(name)
+    if !ok {
+        panic (fmt.Sprintf("Prop not exist: %s", name))
     }
 
     return prop
@@ -111,7 +149,7 @@ func (this *DictWord) ToJSON() (string, error) {
 }
 
 func (this *DictWord) FromJSON(data string) error {
-    return json.Unmarshal([]byte(data), this.props)
+    return json.Unmarshal([]byte(data), &this.props)
 }
 
 /**
@@ -129,7 +167,7 @@ type Dict struct {
 
 func (this *Dict) Load(file string) {
     WalkFileLines(file, func(line string) bool{
-        parts := strings.Split(string(line), "\t")
+        parts := strings.Split(line, "\t")
         var prop *DictWord
         if len(parts) > 1 {
             prop = NewDictWordJSON(parts[0], parts[1])
@@ -144,7 +182,7 @@ func (this *Dict) Load(file string) {
 }
 
 func (this *Dict) Export(file string) {
-    fi, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY, 0660)
+    fi, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0660)
 
     if err != nil {
         panic(err)

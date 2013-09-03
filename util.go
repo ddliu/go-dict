@@ -6,6 +6,7 @@ import (
     "io"
     "os"
     "bufio"
+    "strconv"
 )
 
 func randomSlice(slice []string, limit int) []string {
@@ -55,4 +56,72 @@ func WalkFileLines(file string, f func(line string) bool) {
             }
         }
     }
+}
+
+func ToInt64(v interface{}) (int64, bool) {
+    switch v := v.(type) {
+    case int:
+        return int64(v), true
+    case int32:
+        return int64(v), true
+    case int64:
+        return v, true
+    case float32:
+        return int64(v), true
+    case float64:
+        return int64(v), true
+    case string:
+        result, err := strconv.ParseInt(v, 10, 64)
+        if err != nil {
+            return 0, false
+        }
+        return result, true
+    }
+    return 0, false
+}
+
+func ToInt32(v interface{}) (int32, bool) {
+    switch v := v.(type) {
+    case int:
+        return int32(v), true
+    case int32:
+        return v, true
+    case int64:
+        return int32(v), true
+    case float32:
+        return int32(v), true
+    case float64:
+        return int32(v), true
+    case string:
+        result, err := strconv.ParseInt(v, 10, 32)
+        if err != nil {
+            return 0, false
+        }
+        return int32(result), true
+    }
+
+    return 0, false
+}
+
+func ToInt(v interface{}) (int, bool) {
+    switch v := v.(type) {
+    case int:
+        return v, true
+    case int32:
+        return int(v), true
+    case int64:
+        return int(v), true
+    case float32:
+        return int(v), true
+    case float64:
+        return int(v), true
+    case string:
+        result, err := strconv.ParseInt(v, 10, 0)
+        if err != nil {
+            return 0, false
+        }
+        return int(result), true
+    }
+
+    return 0, false
 }
