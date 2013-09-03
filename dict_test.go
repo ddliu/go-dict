@@ -6,43 +6,38 @@ import (
 
 func sampleDict() *Dict {
     d := NewDict()
-    var prop *WordProp
 
-    prop = NewWordProp(map[string]interface{}{
+    d.AddMap("Duck", map[string]interface{}{
         "Legs": 2,
         "Swim": true,
         "Fly": false,
     })
-    d.Add("Duck", prop)
 
-    // prop = NewWordProp()
+    // prop = NewDictWord()
     d.AddMap("Dog", map[string]interface{}{
         "Legs": 4,
         "Swim": true,
         "Fly": false,
     })
 
-    prop = NewWordProp(map[string]interface{}{
+    d.AddMap("Snake", map[string]interface{}{
         "Legs": 0,
         "Swim": false,
         "Fly": false,
     })
-    d.Add("Snake", prop)
 
-    prop = NewWordProp(map[string]interface{}{
+    d.AddMap("Bird", map[string]interface{}{
         "Legs": 2,
         "Swim": false,
         "Fly": true,
     })
-    d.Add("Bird", prop)
 
-    prop = NewWordProp(map[string]interface{}{
+    d.AddMap("Lion", map[string]interface{}{
         "Legs": 4,
         "Swim": false,
         "Fly": false,
         "Color": "yellow",
     })
-    d.Add("Lion", prop)
 
     return d
 }
@@ -123,7 +118,7 @@ func TestDictLookup(t *testing.T) {
     t.Log("Got", words)
 
 
-    if /*words[0] != "Line" || words[1] != "Dog" || it's not in order :( */len(words) != 2 {
+    if words[0] != "Dog" || words[1] != "Lion" || len(words) != 2 {
         t.Errorf("Unexcepted match")
     }
 
@@ -138,19 +133,19 @@ func TestDictLookup(t *testing.T) {
 
 func TestDictProp(t *testing.T) {
     d := sampleDict()
-    if !d.MustProp("Duck").MustPropBool("Swim") {
+    if !d.MustGet("Duck").MustPropBool("Swim") {
         t.Errorf("Prop error")
     }
-    if d.MustProp("Lion").MustPropString("Color") != "yellow" {
+    if d.MustGet("Lion").MustPropString("Color") != "yellow" {
         t.Errorf("Prop error")
     }
-    if d.MustProp("Bird").MustPropInt("Legs") != 2 {
+    if d.MustGet("Bird").MustPropInt("Legs") != 2 {
         t.Errorf("Prop error")
     }
-    if v, ok := d.Prop("Human"); v != nil || ok != false {
+    if v, ok := d.Get("Human"); v != nil || ok != false {
         t.Errorf("Prop error")
     }
-    if v, ok := d.MustProp("Snake").PropString("Age"); v != "" || ok != false {
+    if v, ok := d.MustGet("Snake").PropString("Age"); v != "" || ok != false {
         t.Errorf("Prop error")
     }
 }
@@ -158,7 +153,7 @@ func TestDictProp(t *testing.T) {
 func TestDictFilter(t *testing.T) {
     d := sampleDict()
 
-    list := d.Filter(func(word string, prop *WordProp) bool {
+    list := d.Filter(func(prop *DictWord) bool {
         if p, _ := prop.PropInt("Legs"); p == 4 {
             return true
         }
@@ -176,10 +171,10 @@ func TestDictWalk(t *testing.T) {
     d := sampleDict()
 
     length := 0
-    d.Walk(func(word string, prop *WordProp) bool {
+    d.Walk(func(prop *DictWord) bool {
         fly, _ := prop.PropBool("Fly")
 
-        if word == "Lion" || fly {
+        if prop.Word == "Lion" || fly {
             length ++
         }
         return true
