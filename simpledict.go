@@ -3,6 +3,7 @@ package dict
 import (
     "os"
     "regexp"
+    "github.com/ddliu/dict/util"
 )
 
 func NewSimpleDict() *SimpleDict {
@@ -14,7 +15,7 @@ type SimpleDict struct {
 }
 
 func (this *SimpleDict) Load(dict string) {
-    WalkFileLines(dict, func(line string) bool {
+    util.WalkFileLines(dict, func(line string) bool {
         this.words = append(this.words, string(line[:]))
         return true
     })

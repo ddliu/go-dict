@@ -6,6 +6,8 @@ import (
     "strings"
     "regexp"
     "fmt"
+    "sort"
+    "github.com/ddliu/dict/util"
     // "reflect"
 )
 
@@ -51,7 +53,7 @@ func (this *DictWord) PropInt(name string) (int, bool) {
         return 0, false
     }
 
-    return ToInt(prop)
+    return util.ToInt(prop)
 }
 
 func (this *DictWord) MustPropInt(name string) (int) {
@@ -69,7 +71,7 @@ func (this *DictWord) PropInt32(name string) (int32, bool) {
         return 0, false
     }
 
-    return ToInt32(prop)
+    return util.ToInt32(prop)
 }
 
 func (this *DictWord) MustPropInt32(name string) (int32) {
@@ -87,7 +89,7 @@ func (this *DictWord) PropInt64(name string) (int64, bool) {
         return 0, false
     }
 
-    return ToInt64(prop)
+    return util.ToInt64(prop)
 }
 
 func (this *DictWord) MustPropInt64(name string) (int64) {
@@ -157,16 +159,17 @@ func (this *DictWord) FromJSON(data string) error {
  */
 
 func NewDict() *Dict {
-    return &Dict {[]*DictWord{}, map[string]int{}}
+    return &Dict {[]*DictWord{}, map[string]int{}, func(a *DictWord, b *DictWord) bool {return true}}
 }
 
 type Dict struct {
     words []*DictWord
     indexes map[string]int
+    less func(*DictWord, *DictWord) bool
 }
 
 func (this *Dict) Load(file string) {
-    WalkFileLines(file, func(line string) bool{
+    util.WalkFileLines(file, func(line string) bool{
         parts := strings.Split(line, "\t")
         var prop *DictWord
         if len(parts) > 1 {
@@ -237,6 +240,7 @@ func (this *Dict) MustGet(word string) *DictWord {
     return prop
 }
 
+
 func (this *Dict) Count() int {
     return len(this.words)
 }
@@ -296,4 +300,30 @@ func (this *Dict) Walk(f func(*DictWord) bool) {
             break
         }
     }
+}
+
+func (this *Dict) Sort(less func(*DictWord, *DictWord) bool) {
+    this.less = less
+    sort.Sort(this)
+}
+
+func (this *Dict) SortByWord() {
+    this.Sort(func(a *DictWord, b *DictWord) bool {
+        return a.Word < b.Word
+    })
+}
+
+/* sort */
+
+func (this *Dict) Len() int {
+    return len(this.words)
+}
+
+func (this *Dict) Swap(i, j int) {
+    this.words[i], this.words[j] = this.words[j], this.words[i]
+    this.indexes[this.words[i].Word], this.indexes[this.words[j].Word] = this.indexes[this.words[i].Word], this.indexes[this.words[j].Word]
+} 
+
+func (this *Dict) Less(i, j int) bool {
+    return this.less(this.words[i], this.words[j])
 }

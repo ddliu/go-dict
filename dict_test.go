@@ -184,3 +184,19 @@ func TestDictWalk(t *testing.T) {
         t.Errorf("Walk error")
     }
 }
+
+func TestDictSort(t *testing.T) {
+    d := sampleDict()
+
+    d.SortByWord()
+    if d.LookupOne("") != "Bird" {
+        t.Errorf("SortByWord error")
+    }
+
+    d.Sort(func(a *DictWord, b *DictWord) bool {
+        return a.MustPropInt("Legs") < b.MustPropInt("Legs")
+    })
+    if d.LookupOne("") != "Snake" {
+        t.Errorf("Sort error")
+    }
+}

@@ -1,4 +1,4 @@
-package dict
+package util
 
 import (
     "math/rand"
@@ -9,7 +9,7 @@ import (
     "strconv"
 )
 
-func randomSlice(slice []string, limit int) []string {
+func RandomSlice(slice []string, limit int) []string {
     length := len(slice)
     if limit >= length {
         return slice
