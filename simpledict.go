@@ -3,7 +3,7 @@ package dict
 import (
     "os"
     "regexp"
-    "github.com/ddliu/dict/util"
+    "github.com/ddliu/go-dict/util"
 )
 
 func NewSimpleDict() *SimpleDict {

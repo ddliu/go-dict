@@ -7,7 +7,7 @@ import (
     "regexp"
     "fmt"
     "sort"
-    "github.com/ddliu/dict/util"
+    "github.com/ddliu/go-dict/util"
     // "reflect"
 )
 
