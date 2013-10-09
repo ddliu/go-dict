@@ -1,10 +1,12 @@
 # go-dict
 
+[![Build Status](https://travis-ci.org/ddliu/go-dict.png?branch=master)](https://travis-ci.org/ddliu/go-dict)
+
 `go-dict` is a golang package to manage and lookup a local dictionary.
 
 ## Documentation
 
-[http://godoc.org/github.com/ddliu/go-dict](View documentaion on godoc.org)
+[View documentaion on godoc.org](http://godoc.org/github.com/ddliu/go-dict)
 
 ## Installation
 
